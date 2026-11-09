@@ -1,10 +1,12 @@
 package com.example.myautomationapp
 
+import android.Manifest
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.content.pm.PackageManager
 import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -90,6 +92,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onResume() { super.onResume(); refreshAccessibilityStatus() }
+    @Deprecated("Use the Activity Result API in future revisions")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 410 && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) startVoiceInput()
+        else if (requestCode == 410) showResult("ভয়েস কমান্ডের জন্য Microphone permission প্রয়োজন।")
+    }
     override fun onDestroy() { speechRecognizer?.destroy(); speechRecognizer = null; super.onDestroy() }
 
     private fun runCommand(raw: String) {
@@ -113,6 +121,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startVoiceInput() {
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 410)
+            return
+        }
         if (!SpeechRecognizer.isRecognitionAvailable(this)) { showResult("এই ফোনে speech recognition service পাওয়া যায়নি।"); return }
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
@@ -187,7 +199,7 @@ class MainActivity : AppCompatActivity() {
     }
     private fun rounded(color: Int, radius: Int) = GradientDrawable().apply { setColor(color); cornerRadius = dp(radius).toFloat() }
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
-    private fun View.withTop(margin: Int): View {
+    private fun <T : View> T.withTop(margin: Int): T {
         layoutParams = LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(margin) }
         return this
     }
