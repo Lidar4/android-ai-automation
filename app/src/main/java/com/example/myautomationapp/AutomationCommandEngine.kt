@@ -2,8 +2,8 @@ package com.example.myautomationapp
 
 import java.util.Locale
 
-enum class CommandKind { OPEN_APP, BACK, HOME, RECENT, SCROLL_DOWN, SCROLL_UP, UNKNOWN }
-data class ParsedCommand(val kind: CommandKind, val app: AppEntry? = null)
+enum class CommandKind { OPEN_APP, BACK, HOME, RECENT, SCROLL_DOWN, SCROLL_UP, TAP_TEXT, TYPE_TEXT, UNKNOWN }
+data class ParsedCommand(val kind: CommandKind, val app: AppEntry? = null, val value: String? = null)
 
 object AutomationCommandEngine {
     private val knownPackages = mapOf(
@@ -30,6 +30,23 @@ object AutomationCommandEngine {
         if (text == "back" || text.contains("go back") || text.contains("পেছনে যাও") || text.contains("ব্যাক")) return ParsedCommand(CommandKind.BACK)
         if (text == "home" || text.contains("go home") || text.contains("হোমে যাও")) return ParsedCommand(CommandKind.HOME)
         if (text.contains("recent apps") || text.contains("রিসেন্ট অ্যাপ")) return ParsedCommand(CommandKind.RECENT)
+        val typeValue = when {
+            text.startsWith("type ") -> input.substringAfter("type ").trim()
+            text.startsWith("enter text ") -> input.substringAfter("enter text ").trim()
+            text.startsWith("টাইপ করো ") -> input.substringAfter("টাইপ করো ").trim()
+            text.startsWith("লিখো ") -> input.substringAfter("লিখো ").trim()
+            else -> ""
+        }
+        if (typeValue.isNotBlank()) return ParsedCommand(CommandKind.TYPE_TEXT, value = typeValue.take(500))
+        val tapValue = when {
+            text.startsWith("tap ") -> input.substringAfter("tap ").trim()
+            text.startsWith("click ") -> input.substringAfter("click ").trim()
+            text.startsWith("press ") -> input.substringAfter("press ").trim()
+            text.startsWith("বাটনে চাপ দাও ") -> input.substringAfter("বাটনে চাপ দাও ").trim()
+            text.endsWith("এ চাপ দাও") -> input.substringBeforeLast("এ চাপ দাও").trim()
+            else -> ""
+        }
+        if (tapValue.isNotBlank()) return ParsedCommand(CommandKind.TAP_TEXT, value = tapValue.take(80))
         val cleaned = text
             .replace(Regex("^(open|launch|start|খোলো|খুলে দাও|চালু করো|ওপেন করো)\\s*"), "")
             .replace(Regex("(খোলো|খুলে দাও|চালু করো|ওপেন করো|open|please)$"), "")
