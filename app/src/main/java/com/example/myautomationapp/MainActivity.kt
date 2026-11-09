@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         statusCard.addView(label("ACCESSIBILITY STATUS", 10, muted, true))
         statusText = label("Checking permission…", 17, Color.WHITE, true).withTop(7) as TextView
         statusCard.addView(statusText)
-        statusCard.addView(label("Enable Proton AI in Android Accessibility settings to use Back, Home and scrolling controls.", 12, muted).withTop(6))
+        statusCard.addView(label("Enable Proton AI in Android Accessibility settings to use navigation, scrolling, visible button taps and focused-field text entry.", 12, muted).withTop(6))
         val permissionButton = button("Open accessibility settings")
         permissionButton.setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
         statusCard.addView(permissionButton.withTop(12))
