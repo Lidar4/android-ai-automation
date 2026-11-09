@@ -6,7 +6,8 @@ Proton AI is an on-device Android automation starter app. It provides a branded 
 - Discover launchable apps installed on the device.
 - Open apps such as YouTube, Facebook, Instagram, TikTok, WhatsApp, Messenger, Telegram, Gmail, Chrome, Settings, Photos, Camera, Spotify and Maps when installed.
 - Voice input (Android speech recognition) and typed commands in Bangla/English.
-- Accessibility actions: Back, Home, Recent Apps, scroll up and scroll down.
+- Accessibility actions: Back, Home, Recent Apps, scroll up/down, tap a visible UI label, and type into the currently focused text field.
+- Destructive or consequential buttons such as Send, Post, Publish, Pay, Purchase and Delete are blocked by the basic text-tap guard.
 
 ## Setup
 1. Install the APK.
