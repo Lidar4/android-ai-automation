@@ -24,13 +24,18 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Verify and install Android SDK components
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+
+      - name: Verify Android SDK components
         run: |
-          test -n "${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          test -n "${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
           command -v sdkmanager
           sdkmanager --version
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-          yes | sdkmanager --licenses >/dev/null || true
+          test -d "${ANDROID_SDK_ROOT:-${ANDROID_HOME}}/platforms/android-34"
+          test -x "${ANDROID_SDK_ROOT:-${ANDROID_HOME}}/build-tools/34.0.0/aapt"
 
       - name: Verify Gradle environment
         run: ./gradlew --version
