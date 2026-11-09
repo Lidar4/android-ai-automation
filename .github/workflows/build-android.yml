@@ -2,40 +2,46 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main]
   pull_request:
-    branches: [ main, master ]
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
 
-    - name: Generate Gradle Wrapper Automatically
-      run: |
-        if [ ! -f "gradlew" ]; then
-          echo "Generating Gradle wrapper..."
-          GRADLE_VERSION=8.2
-          wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
-          unzip -q gradle-${GRADLE_VERSION}-bin.zip
-          gradle-${GRADLE_VERSION}/bin/gradle wrapper --gradle-version ${GRADLE_VERSION}
-        fi
-        chmod +x gradlew
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug
+      - name: Install Android SDK platform and build tools
+        run: |
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          yes | sdkmanager --licenses >/dev/null || true
 
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: debug-apk
-        path: app/build/outputs/apk/debug/*.apk
+      - name: Verify Gradle environment
+        run: ./gradlew --version
+
+      - name: Build debug APK
+        run: ./gradlew clean assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
