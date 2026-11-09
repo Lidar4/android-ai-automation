@@ -111,12 +111,12 @@ class MainActivity : AppCompatActivity() {
                 if (launchIntent == null) showResult("${entry.label} সরাসরি খোলা যাচ্ছে না।")
                 else { launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); startActivity(launchIntent); showResult("${entry.label} খোলা হচ্ছে।") }
             }
-            CommandKind.BACK, CommandKind.HOME, CommandKind.RECENT, CommandKind.SCROLL_DOWN, CommandKind.SCROLL_UP -> {
+            CommandKind.BACK, CommandKind.HOME, CommandKind.RECENT, CommandKind.SCROLL_DOWN, CommandKind.SCROLL_UP, CommandKind.TAP_TEXT, CommandKind.TYPE_TEXT -> {
                 val service = MyAccessibilityService.instance
                 if (service == null) showResult("এই নির্দেশের জন্য Accessibility Service চালু করো। উপরের সেটিংস বাটন ব্যবহার করো।")
-                else showResult(if (service.performCommand(parsed.kind)) "নির্দেশ সম্পন্ন হয়েছে।" else "Android এই কাজটি সম্পাদন করতে দেয়নি।")
+                else showResult(if (service.performCommand(parsed)) "নির্দেশ সম্পন্ন হয়েছে।" else "Android এই কাজটি সম্পাদন করতে দেয়নি।")
             }
-            CommandKind.UNKNOWN -> showResult("এই কমান্ডটি এখনো সমর্থিত নয়। অ্যাপ খোলা, Back, Home, Recent Apps এবং Scroll ব্যবহার করো।")
+            CommandKind.UNKNOWN -> showResult("এই কমান্ডটি এখনো সমর্থিত নয়। অ্যাপ খোলা, Back, Home, Recent Apps, Scroll, tap এবং type ব্যবহার করো।")
         }
     }
 
