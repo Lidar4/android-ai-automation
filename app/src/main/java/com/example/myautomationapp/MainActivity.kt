@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         appList.removeAllViews()
         val preferred = listOf("YouTube", "Facebook", "Instagram", "TikTok", "WhatsApp", "Messenger", "Telegram", "Gmail", "Chrome", "Settings", "Photos", "Camera")
         val ordered = installedApps.sortedWith(compareBy<AppEntry>({ preferred.indexOfFirst { p -> it.label.equals(p, true) }.let { if (it < 0) 999 else it } }, { it.label.lowercase(Locale.ROOT) }))
-        ordered.take(60).forEach { entry ->
+        ordered.forEach { entry ->
             val row = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
