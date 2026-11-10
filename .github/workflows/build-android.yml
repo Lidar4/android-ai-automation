@@ -40,6 +40,9 @@ jobs:
       - name: Verify Gradle environment
         run: ./gradlew --version
 
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --stacktrace
+
       - name: Build debug APK
         run: ./gradlew clean assembleDebug --stacktrace
 
