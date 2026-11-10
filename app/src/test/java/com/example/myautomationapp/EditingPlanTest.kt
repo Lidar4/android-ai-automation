@@ -14,7 +14,7 @@ class EditingPlanTest {
 
     @Test fun acceptsValidatedAnalysisPlan() {
         val result = EditingPlanCodec.fromJson("""{"schema_version":1,"project":"video_edit","target":"local_engine","goal":"Analyze","steps":[{"action":"analyze_media"}],"requires_confirmation":true}""")
-        assertTrue("decoded plan error: ${result.exceptionOrNull()?.message}", result.isSuccess)
+        assertTrue("decoded plan error: ${result.exceptionOrNull()?.stackTraceToString()}", result.isSuccess)
         assertTrue(PlanValidator.validate(result.getOrThrow()).isSuccess)
     }
 

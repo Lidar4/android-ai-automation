@@ -36,3 +36,13 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     testImplementation 'junit:junit:4.13.2'
 }
+
+tasks.withType(Test).configureEach {
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+        showExceptions = true
+        showCauses = true
+        showStackTraces = true
+    }
+}
